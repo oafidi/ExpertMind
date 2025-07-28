@@ -1,0 +1,56 @@
+<!-- templates/partials/_chat.html -->
+<div class="flex flex-col">
+    <div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                    <p class="text-xs text-gray-500">Ask questions about your document</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span id="chat-status">Ready</span>
+            </div>
+        </div>
+        
+        <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 min-h-[350px]">
+            <!-- Chat messages will be dynamically inserted here -->
+        </div>
+        
+        <div class="p-6 border-t border-gray-100">
+            <div class="text-center py-8" id="chat-welcome-message">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-700 mb-2">AI-Powered Analysis</h4>
+                <p class="text-sm text-gray-500 mb-4">I'm here to help you understand your documents better</p>
+                <p class="text-xs text-gray-400">Upload and select a PDF to start our conversation</p>
+            </div>
+        </div>
+        
+        <div class="p-6 border-t border-gray-100">
+            <form id="input-container" class="space-y-3">
+                <div class="relative">
+                    <input type="text" id="user-input" placeholder="Ask me anything about your document..." class="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <button type="submit" id="send-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed floating-action" disabled>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Press Enter to send</span>
+                    <span id="char-count">0/500</span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

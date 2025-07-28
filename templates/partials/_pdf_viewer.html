@@ -1,0 +1,50 @@
+<!-- templates/partials/_pdf_viewer.html -->
+<div class="flex flex-col">
+    <div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Document Preview</h3>
+                    <p class="text-xs text-gray-500">Interactive PDF viewer</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="prev-page" class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span id="page-info" class="text-sm text-gray-600 px-3 py-1 bg-gray-100 rounded-lg min-w-[80px] text-center"></span>
+                <button id="next-page" class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 p-6">
+            <div id="pdf-viewer" class="w-full h-full bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center min-h-[400px] transition-all duration-500">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-700 mb-2">Ready for your document</h4>
+                    <p class="text-sm text-gray-500 mb-4">Select a PDF from your library to start viewing</p>
+                    <div class="flex items-center justify-center space-x-2 text-xs text-gray-400">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span>Waiting for selection...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
