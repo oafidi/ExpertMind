@@ -65,10 +65,10 @@ def get_all_documents():
     """Retrieves all documents from the database."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT filename FROM documents ORDER BY created_at DESC")
+    cursor.execute("SELECT id, filename, vectorstore_path FROM documents ORDER BY created_at DESC")
     results = cursor.fetchall()
     conn.close()
-    return [row[0] for row in results]
+    return results
 
 def add_chat_message(document_id, role, content):
     """Adds a chat message to the database."""

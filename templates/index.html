@@ -1,484 +1,674 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExpertMind</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'inter': ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'pulse-slow': 'pulse 3s infinite',
-                        'bounce-gentle': 'bounceGentle 1s infinite',
-                    },
-                    backdropBlur: {
-                        xs: '2px',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #3b82f6 #f1f5f9;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f8fafc;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #3b82f6, #6366f1);
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #2563eb, #4f46e5);
-        }
-        
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes bounceGentle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.125);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .pdf-canvas {
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        
-        .floating-action {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .floating-action:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .markdown-body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: #374151;
-        }
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.3em;
-            margin-top: 1.5em;
-            margin-bottom: 1em;
-            font-weight: 600;
-        }
-        .markdown-body h1 { font-size: 1.75em; }
-        .markdown-body h2 { font-size: 1.5em; }
-        .markdown-body h3 { font-size: 1.25em; }
-        .markdown-body p {
-            margin-bottom: 1em;
-        }
-        .markdown-body ul, .markdown-body ol {
-            padding-left: 2em;
-            margin-bottom: 1em;
-        }
-        .markdown-body li {
-            margin-bottom: 0.5em;
-        }
-        .markdown-body pre {
-            background-color: #f3f4f6;
-            padding: 1em;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin-bottom: 1em;
-        }
-        .markdown-body code {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #e5e7eb;
-            padding: 0.2em 0.4em;
-            border-radius: 0.25rem;
-        }
-        .markdown-body pre code {
-            background-color: transparent;
-            padding: 0;
-        }
-        .markdown-body blockquote {
-            border-left: 4px solid #d1d5db;
-            padding-left: 1em;
-            margin-left: 0;
-            color: #6b7280;
-            font-style: italic;
-        }
-        .markdown-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1em;
-        }
-        .markdown-body th, .markdown-body td {
-            border: 1px solid #d1d5db;
-            padding: 0.5em 1em;
-        }
-        .markdown-body th {
-            background-color: #f9fafb;
-            font-weight: 600;
-        }
-        .markdown-body .source-citation {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #4f46e5;
-            background-color: #e0e7ff;
-            padding: 0.1rem 0.5rem;
-            border-radius: 9999px;
-            margin-left: 0.5rem;
-            vertical-align: super;
-        }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ExpertMind</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					fontFamily: {
+						'inter': ['Inter', 'sans-serif'],
+					},
+					animation: {
+						'fade-in': 'fadeIn 0.5s ease-out',
+						'slide-up': 'slideUp 0.3s ease-out',
+						'pulse-slow': 'pulse 3s infinite',
+						'bounce-gentle': 'bounceGentle 1s infinite',
+					},
+					backdropBlur: {
+						xs: '2px',
+					}
+				}
+			}
+		}
+	</script>
+	<style>
+		* {
+			scrollbar-width: thin;
+			scrollbar-color: #3b82f6 #f1f5f9;
+		}
+
+		::-webkit-scrollbar {
+			width: 6px;
+			height: 6px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: #f8fafc;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: linear-gradient(45deg, #3b82f6, #6366f1);
+			border-radius: 10px;
+			border: 1px solid #e2e8f0;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: linear-gradient(45deg, #2563eb, #4f46e5);
+		}
+
+		html,
+		body {
+			height: 100%;
+			overflow: hidden;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes slideUp {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes bounceGentle {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-5px);
+			}
+		}
+
+		.glass-card {
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(20px) saturate(180%);
+			border: 1px solid rgba(255, 255, 255, 0.125);
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+		}
+
+		.gradient-text {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.pdf-canvas {
+			max-width: 100%;
+			height: auto;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		.floating-action {
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.floating-action:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+		}
+
+		.markdown-body {
+			font-family: 'Inter', sans-serif;
+			line-height: 1.6;
+			color: #374151;
+		}
+
+		.markdown-body h1,
+		.markdown-body h2,
+		.markdown-body h3 {
+			border-bottom: 1px solid #e5e7eb;
+			padding-bottom: 0.3em;
+			margin-top: 1.5em;
+			margin-bottom: 1em;
+			font-weight: 600;
+		}
+
+		.markdown-body h1 {
+			font-size: 1.75em;
+		}
+
+		.markdown-body h2 {
+			font-size: 1.5em;
+		}
+
+		.markdown-body h3 {
+			font-size: 1.25em;
+		}
+
+		.markdown-body p {
+			margin-bottom: 1em;
+		}
+
+		.markdown-body ul,
+		.markdown-body ol {
+			padding-left: 2em;
+			margin-bottom: 1em;
+		}
+
+		.markdown-body li {
+			margin-bottom: 0.5em;
+		}
+
+		.markdown-body pre {
+			background-color: #f3f4f6;
+			padding: 1em;
+			border-radius: 0.5rem;
+			overflow-x: auto;
+			margin-bottom: 1em;
+		}
+
+		.markdown-body code {
+			font-family: 'Courier New', Courier, monospace;
+			background-color: #e5e7eb;
+			padding: 0.2em 0.4em;
+			border-radius: 0.25rem;
+		}
+
+		.markdown-body pre code {
+			background-color: transparent;
+			padding: 0;
+		}
+
+		.markdown-body blockquote {
+			border-left: 4px solid #d1d5db;
+			padding-left: 1em;
+			margin-left: 0;
+			color: #6b7280;
+			font-style: italic;
+		}
+
+		.markdown-body table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-bottom: 1em;
+		}
+
+		.markdown-body th,
+		.markdown-body td {
+			border: 1px solid #d1d5db;
+			padding: 0.5em 1em;
+		}
+
+		.markdown-body th {
+			background-color: #f9fafb;
+			font-weight: 600;
+		}
+
+		.markdown-body .source-citation {
+			display: inline-block;
+			font-size: 0.75rem;
+			font-weight: 500;
+			color: #4f46e5;
+			background-color: #e0e7ff;
+			padding: 0.1rem 0.5rem;
+			border-radius: 9999px;
+			margin-left: 0.5rem;
+			vertical-align: super;
+		}
+
+		/* PDF Viewer Styles */
+		#pdf-viewer {
+			position: relative;
+		}
+
+		#pdf-canvas {
+			max-width: 100%;
+			height: auto;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			border-radius: 8px;
+		}
+
+		#highlight-layer {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			pointer-events: none;
+			z-index: 10;
+		}
+
+		.pdf-highlight {
+			background-color: rgba(255, 255, 0, 0.3);
+			border: 2px solid rgba(255, 193, 7, 0.8);
+			border-radius: 2px;
+			animation: highlightPulse 2s ease-in-out;
+		}
+
+		@keyframes highlightPulse {
+
+			0%,
+			100% {
+				background-color: rgba(255, 255, 0, 0.3);
+				transform: scale(1);
+			}
+
+			50% {
+				background-color: rgba(255, 255, 0, 0.5);
+				transform: scale(1.02);
+			}
+		}
+	</style>
 </head>
-<body class="h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 font-inter antialiased flex flex-col">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
-        <div class="w-full px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 sm:h-20">
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-110">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse-slow"></div>
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold gradient-text">ExpertMind</h1>
-                        <p class="text-sm text-gray-600 hidden sm:block">Advanced document analysis powered by AI</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span>AI Ready</span>
-                    </div>
-                    <button class="floating-upload-btn group cursor-pointer">
-                        <div class="floating-action px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-medium shadow-lg flex items-center space-x-2">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                            </svg>
-                            <span class="text-sm sm:text-base">Upload PDF</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Main Content -->
-    <main class="flex-1 overflow-hidden flex flex-col">
-        <div class="w-full px-4 sm:px-6 lg:px-8 py-6 h-full flex-1 flex flex-col overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full overflow-hidden">
-                
-                <!-- Sidebar: File Library -->
-                <aside class="lg:col-span-1 flex flex-col h-full">
-                    <div class="glass-card rounded-2xl p-6 h-full flex flex-col animate-fade-in">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-lg font-semibold text-gray-900">Document Library</h2>
-                                    <p class="text-xs text-gray-500">Your uploaded PDFs</p>
-                                </div>
-                            </div>
-                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-xs font-bold text-blue-600" id="file-count">{{ files|length }}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex-1 overflow-y-auto space-y-3 pr-2" id="file-list-container">
-                            {% if files %}
-                                <ul id="file-list" class="space-y-3">
-                                    {% for file in files %}
-                                    <li class="group animate-slide-up" data-filename="{{ file }}">
-                                        <div class="flex items-center space-x-2">
-                                            <button class="file-btn flex-1 w-full text-left p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 border border-gray-200 hover:border-blue-300 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg" data-filename="{{ file }}">
-                                                <div class="flex items-center space-x-3">
-                                                    <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-medium text-gray-900 truncate group-hover:text-blue-700 transition-colors">{{ file }}</p>
-                                                        <p class="text-xs text-gray-500">PDF Document</p>
-                                                    </div>
-                                                </div>
-                                            </button>
-                                            <button class="delete-btn p-3 rounded-full text-gray-400 hover:bg-red-100 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100">
-                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <div class="text-center py-12">
-                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                    </div>
-                                    <p class="text-sm text-gray-500 mb-2">No documents yet</p>
-                                    <p class="text-xs text-gray-400">Upload your first PDF to get started</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </aside>
 
-                <!-- Main Content: PDF Viewer & Chat -->
-                <section class="lg:col-span-3 flex flex-col h-full">
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 h-full">
-                        
-                        <!-- PDF Viewer -->
-                        <div class="flex flex-col h-full">
-                            <div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
-                                <div class="flex items-center justify-between p-6 border-b border-gray-100">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">Document Preview</h3>
-                                            <p class="text-xs text-gray-500">Interactive PDF viewer</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <button id="prev-page" class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                            </svg>
-                                        </button>
-                                        <span id="page-info" class="text-sm text-gray-600 px-3 py-1 bg-gray-100 rounded-lg min-w-[80px] text-center"></span>
-                                        <button id="next-page" class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex-1 p-6 overflow-y-auto">
-                                    <div id="pdf-viewer" class="w-full h-full bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center min-h-[400px] transition-all duration-500">
-                                        <div class="text-center">
-                                            <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
-                                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                </svg>
-                                            </div>
-                                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Ready for your document</h4>
-                                            <p class="text-sm text-gray-500 mb-4">Select a PDF from your library to start viewing</p>
-                                            <div class="flex items-center justify-center space-x-2 text-xs text-gray-400">
-                                                <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                                                <span>Waiting for selection...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<body
+	class="h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 font-inter antialiased flex flex-col">
+	<!-- Header -->
+	<header class="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
+		<div class="w-full px-4 sm:px-6 lg:px-8">
+			<div class="flex items-center justify-between h-16 sm:h-20">
+				<div class="flex items-center space-x-4">
+					<div class="relative">
+						<div
+							class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform transition-all duration-300 hover:scale-110">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor"
+								viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							</svg>
+						</div>
+						<div
+							class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse-slow">
+						</div>
+					</div>
+					<div>
+						<h1 class="text-xl sm:text-2xl font-bold gradient-text">ExpertMind</h1>
+						<p class="text-sm text-gray-600 hidden sm:block">Advanced document analysis powered by AI</p>
+					</div>
+				</div>
 
-                        <!-- Chat Interface -->
-                        <div class="flex flex-col h-full">
-                            <div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
-                                <div class="flex items-center justify-between p-6 border-b border-gray-100">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">AI Assistant</h3>
-                                            <p class="text-xs text-gray-500">Ask questions about your document</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2 text-xs text-gray-500">
-                                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                        <span id="chat-status">Ready</span>
-                                    </div>
-                                    <button id="clear-chat-btn" class="p-2 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors" title="Clear chat history">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                
-                                <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-6 max-h-[calc(100%-160px)]">
-                                    <div class="text-center py-8">
-                                        <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                            </svg>
-                                        </div>
-                                        <h4 class="text-lg font-semibold text-gray-700 mb-2">AI-Powered Analysis</h4>
-                                        <p class="text-sm text-gray-500 mb-4">I'm here to help you understand your documents better</p>
-                                        <p class="text-xs text-gray-400">Upload and select a PDF to start our conversation</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="p-6 border-t border-gray-100 flex-shrink-0">
-                                    <form id="input-container" class="space-y-3">
-                                        <div class="relative">
-                                            <input type="text" id="user-input" placeholder="Ask me anything about your document..." class="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-hidden" maxlength="500" disabled>
-                                            <button type="submit" id="send-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed floating-action" disabled>
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="flex items-center justify-between text-xs text-gray-500">
-                                            <span>Press Enter to send</span>
-                                            <span id="char-count">0/500</span>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </main>
+				<div class="flex items-center space-x-3">
+					<div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+						<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+						<span>AI Ready</span>
+					</div>
+					<button class="floating-upload-btn group cursor-pointer">
+						<div
+							class="floating-action px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-medium shadow-lg flex items-center space-x-2">
+							<svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+							</svg>
+							<span class="text-sm sm:text-base">Upload PDF</span>
+						</div>
+					</button>
+				</div>
+			</div>
+		</div>
+	</header>
+	<!-- Main Content -->
+	<main class="flex-1 overflow-hidden flex flex-col">
+		<div class="w-full px-4 sm:px-6 lg:px-8 py-6 h-full flex-1 flex flex-col overflow-hidden">
+			<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full overflow-hidden">
 
-    <!-- Footer -->
-    <footer class="bg-white/80 backdrop-blur-md border-t border-gray-100 px-4 sm:px-6 lg:px-8 py-4 animate-fade-in">
-        <div class="w-full flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
-            <div class="flex items-center space-x-4 text-sm text-gray-600">
-                <div class="flex items-center space-x-2">
-                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span>System Online</span>
-                </div>
-                <span>•</span>
-                <span>Powered by AI</span>
-            </div>
-            <div class="flex items-center space-x-4 text-sm text-gray-500">
-                <span>© 2024 ExpertMind</span>
-                <span>•</span>
-                <a href="#" class="hover:text-blue-600 transition-colors">Privacy</a>
-                <span>•</span>
-                <a href="#" class="hover:text-blue-600 transition-colors">Terms</a>
-            </div>
-        </div>
-    </footer>
+				<!-- Sidebar: File Library -->
+				<aside class="lg:col-span-1 flex flex-col h-full">
+					<div class="glass-card rounded-2xl p-6 h-full flex flex-col animate-fade-in">
+						<div class="flex items-center justify-between mb-6">
+							<div class="flex items-center space-x-3">
+								<div
+									class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+									<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+									</svg>
+								</div>
+								<div>
+									<h2 class="text-lg font-semibold text-gray-900">Document Library</h2>
+									<p class="text-xs text-gray-500">Your uploaded PDFs</p>
+								</div>
+							</div>
+							<div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+								<span class="text-xs font-bold text-blue-600" id="file-count">{{ files|length }}</span>
+							</div>
+						</div>
 
-    <!-- Upload Modal -->
-    <div id="upload-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-up">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-900 mb-2">Upload PDF Document</h3>
-                <p class="text-sm text-gray-600">Choose a PDF file to analyze with our AI assistant</p>
-            </div>
-            
-            <form id="upload-form" enctype="multipart/form-data" class="space-y-4">
-                <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 transition-colors">
-                    <input type="file" id="pdf-file" name="file" accept=".pdf" class="hidden" required>
-                    <label for="pdf-file" class="cursor-pointer">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-1">Click to select PDF file</p>
-                        <p class="text-xs text-gray-400">Maximum size: 10MB</p>
-                    </label>
-                </div>
-                
-                <div class="flex space-x-3">
-                    <button type="button" id="cancel-upload" class="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" id="upload-submit" class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition-all duration-200 disabled:opacity-50">
-                        <span class="upload-text">Upload</span>
-                        <span class="upload-loading hidden">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Processing...
-                        </span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+						<div class="flex-1 overflow-y-auto space-y-3 pr-2" id="file-list-container">
+							{% if files %}
+							<ul id="file-list" class="space-y-3">
+								{% for file in files %}
+								<li class="group animate-slide-up" data-filename="{{ file[1] }}">
+									<div class="flex items-center space-x-2">
+										<button
+											class="file-btn flex-1 w-full text-left p-4 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-50 hover:to-indigo-50 border border-gray-200 hover:border-blue-300 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg"
+											data-filename="{{ file[1] }}">
+											<div class="flex items-center space-x-3">
+												<div
+													class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+													<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
+														viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round"
+															stroke-width="2"
+															d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+													</svg>
+												</div>
+												<div class="flex-1 min-w-0">
+													<p
+														class="text-sm font-medium text-gray-900 truncate group-hover:text-blue-700 transition-colors">
+														{{ file[1] }}</p>
+													<p class="text-xs text-gray-500">PDF Document</p>
+												</div>
+											</div>
+										</button>
+										<button
+											class="delete-btn p-3 rounded-full text-gray-400 hover:bg-red-100 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100">
+											<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+												<path fill-rule="evenodd"
+													d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z"
+													clip-rule="evenodd" />
+											</svg>
+										</button>
+									</div>
+								</li>
+								{% endfor %}
+							</ul>
+							{% else %}
+							<div class="text-center py-12">
+								<div
+									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+									<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+									</svg>
+								</div>
+								<p class="text-sm text-gray-500 mb-2">No documents yet</p>
+								<p class="text-xs text-gray-400">Upload your first PDF to get started</p>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</aside>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-40 hidden flex items-center justify-center">
-        <div class="text-center">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
-                <svg class="animate-spin w-8 h-8 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Processing Document</h3>
-            <p class="text-sm text-gray-600">Analyzing your PDF with AI...</p>
-        </div>
-    </div>
+				<!-- Main Content: PDF Viewer & Chat -->
+				<section class="lg:col-span-3 flex flex-col h-full">
+					<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 h-full">
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+						<!-- PDF Viewer -->
+						<div class="flex flex-col h-full">
+							<div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
+								<div class="flex items-center justify-between p-6 border-b border-gray-100">
+									<div class="flex items-center space-x-3">
+										<div
+											class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+											<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+											</svg>
+										</div>
+										<div>
+											<h3 class="text-lg font-semibold text-gray-900">Document Preview</h3>
+											<p class="text-xs text-gray-500">Interactive PDF viewer</p>
+										</div>
+									</div>
+									<div class="flex items-center space-x-2">
+										<button id="prev-page"
+											class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+											disabled>
+											<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M15 19l-7-7 7-7" />
+											</svg>
+										</button>
+										<span id="page-info"
+											class="text-sm text-gray-600 px-3 py-1 bg-gray-100 rounded-lg min-w-[80px] text-center"></span>
+										<button id="next-page"
+											class="floating-action w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+											disabled>
+											<svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M9 5l7 7-7 7" />
+											</svg>
+										</button>
+									</div>
+								</div>
+
+								<div class="flex-1 p-6 overflow-y-auto">
+									<div id="pdf-viewer-container"
+										class="w-full h-full bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center min-h-[400px] transition-all duration-500">
+										<div id="pdf-viewer"
+											style="width:100%; height:100%; display: none; position: relative;">
+											<canvas id="pdf-canvas"
+												style="width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
+											<div id="text-layer"
+												style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
+											</div>
+											<div id="highlight-layer"
+												style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
+											</div>
+										</div>
+										<div id="pdf-placeholder" class="text-center">
+											<div
+												class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
+												<svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor"
+													viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round"
+														stroke-width="2"
+														d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+												</svg>
+											</div>
+											<h4 class="text-lg font-semibold text-gray-700 mb-2">Ready for your document
+											</h4>
+											<p class="text-sm text-gray-500 mb-4">Select a PDF from your library to
+												start viewing</p>
+											<div
+												class="flex items-center justify-center space-x-2 text-xs text-gray-400">
+												<div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+												<span>Waiting for selection...</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Chat Interface -->
+						<div class="flex flex-col h-full">
+							<div class="glass-card rounded-2xl flex flex-col h-full animate-fade-in">
+								<div class="flex items-center justify-between p-6 border-b border-gray-100">
+									<div class="flex items-center space-x-3">
+										<div
+											class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+											<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+											</svg>
+										</div>
+										<div>
+											<h3 class="text-lg font-semibold text-gray-900">AI Assistant</h3>
+											<p class="text-xs text-gray-500">Ask questions about your document</p>
+										</div>
+									</div>
+									<div class="flex items-center space-x-2 text-xs text-gray-500">
+										<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+										<span id="chat-status">Ready</span>
+									</div>
+									<button id="clear-chat-btn"
+										class="p-2 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
+										title="Clear chat history">
+										<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+											<path fill-rule="evenodd"
+												d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+												clip-rule="evenodd" />
+										</svg>
+									</button>
+								</div>
+
+								<div id="chat-box"
+									class="flex-1 overflow-y-auto p-6 space-y-6 max-h-[calc(100%-160px)]">
+									<div class="text-center py-8">
+										<div
+											class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+											<svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor"
+												viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+													d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+											</svg>
+										</div>
+										<h4 class="text-lg font-semibold text-gray-700 mb-2">AI-Powered Analysis</h4>
+										<p class="text-sm text-gray-500 mb-4">I'm here to help you understand your
+											documents better</p>
+										<p class="text-xs text-gray-400">Upload and select a PDF to start our
+											conversation</p>
+									</div>
+								</div>
+
+								<div class="p-6 border-t border-gray-100 flex-shrink-0">
+									<form id="input-container" class="space-y-3">
+										<div class="relative">
+											<input type="text" id="user-input"
+												placeholder="Ask me anything about your document..."
+												class="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-hidden"
+												maxlength="500" disabled>
+											<button type="submit" id="send-btn"
+												class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed floating-action"
+												disabled>
+												<svg class="w-4 h-4" fill="none" stroke="currentColor"
+													viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round"
+														stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+												</svg>
+											</button>
+										</div>
+										<div class="flex items-center justify-between text-xs text-gray-500">
+											<span>Press Enter to send</span>
+											<span id="char-count">0/500</span>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</main>
+
+	<!-- Footer -->
+	<footer class="bg-white/80 backdrop-blur-md border-t border-gray-100 px-4 sm:px-6 lg:px-8 py-4 animate-fade-in">
+		<div class="w-full flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+			<div class="flex items-center space-x-4 text-sm text-gray-600">
+				<div class="flex items-center space-x-2">
+					<div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+					<span>System Online</span>
+				</div>
+				<span>•</span>
+				<span>Powered by AI</span>
+			</div>
+			<div class="flex items-center space-x-4 text-sm text-gray-500">
+				<span>© 2024 ExpertMind</span>
+				<span>•</span>
+				<a href="#" class="hover:text-blue-600 transition-colors">Privacy</a>
+				<span>•</span>
+				<a href="#" class="hover:text-blue-600 transition-colors">Terms</a>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Upload Modal -->
+	<div id="upload-modal"
+		class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+		<div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-slide-up">
+			<div class="text-center mb-6">
+				<div
+					class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+					<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+					</svg>
+				</div>
+				<h3 class="text-xl font-semibold text-gray-900 mb-2">Upload PDF Document</h3>
+				<p class="text-sm text-gray-600">Choose a PDF file to analyze with our AI assistant</p>
+			</div>
+
+			<form id="upload-form" enctype="multipart/form-data" class="space-y-4">
+				<div
+					class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 transition-colors">
+					<input type="file" id="pdf-file" name="file" accept=".pdf" class="hidden" required>
+					<label for="pdf-file" class="cursor-pointer">
+						<div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+							<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							</svg>
+						</div>
+						<p class="text-sm text-gray-600 mb-1">Click to select PDF file</p>
+						<p class="text-xs text-gray-400">Maximum size: 10MB</p>
+					</label>
+				</div>
+
+				<div class="flex space-x-3">
+					<button type="button" id="cancel-upload"
+						class="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
+						Cancel
+					</button>
+					<button type="submit" id="upload-submit"
+						class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition-all duration-200 disabled:opacity-50">
+						<span class="upload-text">Upload</span>
+						<span class="upload-loading hidden">
+							<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none"
+								viewBox="0 0 24 24">
+								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+									stroke-width="4"></circle>
+								<path class="opacity-75" fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+								</path>
+							</svg>
+							Processing...
+						</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Loading Overlay -->
+	<div id="loading-overlay"
+		class="fixed inset-0 bg-white/80 backdrop-blur-sm z-40 hidden flex items-center justify-center">
+		<div class="text-center">
+			<div
+				class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
+				<svg class="animate-spin w-8 h-8 text-white" fill="none" viewBox="0 0 24 24">
+					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+					<path class="opacity-75" fill="currentColor"
+						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+					</path>
+				</svg>
+			</div>
+			<h3 class="text-lg font-semibold text-gray-900 mb-2">Processing Document</h3>
+			<p class="text-sm text-gray-600">Analyzing your PDF with AI...</p>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>

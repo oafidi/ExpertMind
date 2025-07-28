@@ -87,20 +87,43 @@ def ask():
     if not data:
         return jsonify({'error': 'Invalid JSON input.'})
     
-    filename = data.get('filename')
     user_question = data.get('question', '').strip()
-    
-    doc_info = get_document(filename)
-    if not doc_info:
-        return jsonify({'error': 'Please select a valid PDF.'})
     if not user_question:
         return jsonify({'error': 'Question cannot be empty.'})
-        
-    doc_id, vectorstore_path = doc_info
-    vectorstore = get_vectorstore_from_path(vectorstore_path)
-    if not vectorstore:
-        return jsonify({'error': 'Could not load document data. Please try re-uploading.'})
 
+    all_docs = get_all_documents()
+    if not all_docs:
+        return jsonify({'error': 'No documents have been uploaded yet.'})
+
+    best_doc_info = None
+    highest_score = -1.0
+
+    for doc_id, filename, vectorstore_path in all_docs:
+        vectorstore = get_vectorstore_from_path(vectorstore_path)
+        if vectorstore:
+            try:
+                # Perform similarity search
+                results_with_scores = vectorstore.similarity_search_with_relevance_scores(user_question, k=1)
+                if results_with_scores:
+                    score = results_with_scores[0][1]
+                    if score > highest_score:
+                        highest_score = score
+                        best_doc_info = {
+                            "doc_id": doc_id,
+                            "filename": filename,
+                            "vectorstore": vectorstore
+                        }
+            except Exception as e:
+                print(f"Could not perform similarity search on {filename}: {e}")
+                continue
+    
+    if not best_doc_info:
+        return jsonify({'error': 'Could not find a relevant document for your question.'})
+
+    doc_id = best_doc_info['doc_id']
+    vectorstore = best_doc_info['vectorstore']
+    filename = best_doc_info['filename']
+    
     # Get learned context from feedback
     from src.feedback_handler import get_learned_context
     lc_used, learned_context = get_learned_context(doc_id, user_question)
@@ -124,7 +147,6 @@ INSTRUCTIONS:
         learned_context_section = ""
     
     chain = get_conversation_chain(vectorstore, doc_id, learned_context_section)
-    history = get_chat_history(doc_id)
     
     # Invoke the chain with the learned context section
     response = chain.invoke({
@@ -138,12 +160,15 @@ INSTRUCTIONS:
     # Check if this came from learned knowledge
     is_from_learned = learned_context and learned_context.strip()
     
-    # Extract source page number
+    # Extract source page number and content
     source_page = None
+    source_content = None
     if response.get('source_documents'):
         first_doc = response['source_documents'][0]
         if hasattr(first_doc, 'metadata') and 'page' in first_doc.metadata:
             source_page = first_doc.metadata['page'] + 1
+        if hasattr(first_doc, 'page_content'):
+            source_content = first_doc.page_content
 
     # Save conversation to DB
     add_chat_message(doc_id, 'user', user_question)
@@ -152,7 +177,9 @@ INSTRUCTIONS:
     return jsonify({
         'answer': answer, 
         'source_page': source_page,
-        'is_from_learned': is_from_learned
+        'source_content': source_content,
+        'is_from_learned': is_from_learned,
+        'filename': filename
     })
 
 @app.route('/history', methods=['GET'])
@@ -336,5 +363,5 @@ def delete():
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['VECTORSTORE_DIR'], exist_ok=True)
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
 
