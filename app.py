@@ -9,7 +9,9 @@ from src.vectorstore_handler import get_vectorstore
 from src.conversation_handler import get_conversation_chain
 from src.database_handler import (
     init_db, add_document, get_document, get_all_documents,
-    add_chat_message, get_chat_history, delete_document
+    add_chat_message, get_chat_history, delete_document,
+    set_selected_document, get_selected_document, clear_selected_document,
+    get_all_feedback_with_documents
 )
 from src.feedback_handler import (
     init_feedback_db, add_feedback, get_feedback_stats, add_note
@@ -46,7 +48,8 @@ def get_vectorstore_from_path(path):
 @app.route('/')
 def index():
     files = get_all_documents()
-    return render_template('index.html', files=files)
+    selected_doc = get_selected_document()
+    return render_template('index.html', files=files, selected_document=selected_doc)
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -173,6 +176,9 @@ INSTRUCTIONS:
     # Save conversation to DB
     add_chat_message(doc_id, 'user', user_question)
     add_chat_message(doc_id, 'assistant', answer)
+    
+    # Update the selected document to the one that was used for answering
+    set_selected_document(filename)
     
     return jsonify({
         'answer': answer, 
@@ -359,6 +365,159 @@ def delete():
     except Exception as e:
         print(f"Error deleting document: {e}")
         return jsonify({'error': f'Error deleting document: {str(e)}'}), 500
+
+@app.route('/select_document', methods=['POST'])
+def select_document():
+    """Set the currently selected document"""
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid JSON input.'}), 400
+    
+    filename = data.get('filename')
+    if not filename:
+        return jsonify({'error': 'Filename is required.'}), 400
+    
+    # Check if document exists
+    doc_info = get_document(filename)
+    if not doc_info:
+        return jsonify({'error': f'Document {filename} not found.'}), 404
+    
+    try:
+        success = set_selected_document(filename)
+        if success:
+            return jsonify({
+                'success': f'Document {filename} selected successfully.',
+                'selected_document': filename
+            })
+        else:
+            return jsonify({'error': 'Failed to select document.'}), 500
+    except Exception as e:
+        print(f"Error selecting document: {e}")
+        return jsonify({'error': f'Error selecting document: {str(e)}'}), 500
+
+@app.route('/selected_document', methods=['GET'])
+def get_selected_document_endpoint():
+    """Get the currently selected document"""
+    try:
+        selected_doc = get_selected_document()
+        if selected_doc:
+            return jsonify({
+                'selected_document': selected_doc['filename'],
+                'selected_at': selected_doc['selected_at'],
+                'has_selection': True
+            })
+        else:
+            return jsonify({
+                'selected_document': None,
+                'selected_at': None,
+                'has_selection': False,
+                'message': 'No document currently selected.'
+            })
+    except Exception as e:
+        print(f"Error getting selected document: {e}")
+        return jsonify({'error': f'Error getting selected document: {str(e)}'}), 500
+
+@app.route('/clear_selection', methods=['POST'])
+def clear_selection():
+    """Clear the currently selected document"""
+    try:
+        success = clear_selected_document()
+        if success:
+            return jsonify({
+                'success': 'Document selection cleared successfully.',
+                'selected_document': None
+            })
+        else:
+            return jsonify({'error': 'Failed to clear document selection.'}), 500
+    except Exception as e:
+        print(f"Error clearing document selection: {e}")
+        return jsonify({'error': f'Error clearing document selection: {str(e)}'}), 500
+
+@app.route('/all_feedback', methods=['GET'])
+def get_all_feedback():
+    """Get all feedback with their associated documents"""
+    try:
+        feedback_list = get_all_feedback_with_documents()
+        
+        # Add summary statistics
+        total_feedback = len(feedback_list)
+        likes = sum(1 for f in feedback_list if f['feedback_type'] == 'like')
+        dislikes = sum(1 for f in feedback_list if f['feedback_type'] == 'dislike')
+        
+        # Group by document for additional insights
+        feedback_by_document = {}
+        for feedback in feedback_list:
+            filename = feedback['filename']
+            if filename not in feedback_by_document:
+                feedback_by_document[filename] = {
+                    'filename': filename,
+                    'document_id': feedback['document_id'],
+                    'total_feedback': 0,
+                    'likes': 0,
+                    'dislikes': 0,
+                    'feedback_items': []
+                }
+            
+            feedback_by_document[filename]['total_feedback'] += 1
+            feedback_by_document[filename]['feedback_items'].append(feedback)
+            
+            if feedback['feedback_type'] == 'like':
+                feedback_by_document[filename]['likes'] += 1
+            else:
+                feedback_by_document[filename]['dislikes'] += 1
+        
+        return jsonify({
+            'feedback': feedback_list,
+            'summary': {
+                'total_feedback': total_feedback,
+                'total_likes': likes,
+                'total_dislikes': dislikes,
+                'satisfaction_rate': round((likes / total_feedback * 100), 2) if total_feedback > 0 else 0
+            },
+            'by_document': list(feedback_by_document.values())
+        })
+        
+    except Exception as e:
+        print(f"Error getting all feedback: {e}")
+        return jsonify({'error': f'Error getting all feedback: {str(e)}'}), 500
+
+@app.route('/feedback_by_document', methods=['GET'])
+def get_feedback_by_document():
+    """Get feedback filtered by document filename"""
+    filename = request.args.get('filename')
+    if not filename:
+        return jsonify({'error': 'Filename parameter is required'}), 400
+    
+    try:
+        # Check if document exists
+        doc_info = get_document(filename)
+        if not doc_info:
+            return jsonify({'error': f'Document {filename} not found'}), 404
+        
+        # Get all feedback and filter by the specific document
+        all_feedback = get_all_feedback_with_documents()
+        document_feedback = [f for f in all_feedback if f['filename'] == filename]
+        
+        # Calculate statistics for this document
+        total_feedback = len(document_feedback)
+        likes = sum(1 for f in document_feedback if f['feedback_type'] == 'like')
+        dislikes = sum(1 for f in document_feedback if f['feedback_type'] == 'dislike')
+        
+        return jsonify({
+            'filename': filename,
+            'document_id': doc_info[0],
+            'feedback': document_feedback,
+            'summary': {
+                'total_feedback': total_feedback,
+                'likes': likes,
+                'dislikes': dislikes,
+                'satisfaction_rate': round((likes / total_feedback * 100), 2) if total_feedback > 0 else 0
+            }
+        })
+        
+    except Exception as e:
+        print(f"Error getting feedback by document: {e}")
+        return jsonify({'error': f'Error getting feedback by document: {str(e)}'}), 500
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
