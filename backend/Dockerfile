@@ -1,0 +1,1 @@
+mv static src uploads vectorstores app.py requirements.txt   

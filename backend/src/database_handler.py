@@ -81,6 +81,27 @@ def get_all_documents():
     conn.close()
     return results
 
+def retrieve_docs():
+    """Retrieves all documents from the database and formats them for the frontend."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT filename, created_at
+        FROM documents
+        ORDER BY created_at DESC
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+
+    documents = [
+        {
+            "filename": row[0],
+            "uploadDate": row[1].split("T")[0] if "T" in row[1] else row[1][:10],
+        }
+        for row in rows
+    ]
+    return documents
+
 def add_chat_message(document_id, role, content):
     """Adds a chat message to the database."""
     conn = sqlite3.connect(DB_PATH)

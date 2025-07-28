@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from langchain_community.vectorstores import FAISS
@@ -8,7 +9,7 @@ from src.pdf_handler import get_pdf_text, get_text_chunks
 from src.vectorstore_handler import get_vectorstore
 from src.conversation_handler import get_conversation_chain
 from src.database_handler import (
-    init_db, add_document, get_document, get_all_documents,
+    init_db, add_document, get_document, get_all_documents, retrieve_docs,
     add_chat_message, get_chat_history, delete_document,
     set_selected_document, get_selected_document, clear_selected_document,
     get_all_feedback_with_documents
@@ -20,6 +21,7 @@ from src.feedback_handler import (
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['VECTORSTORE_DIR'] = 'vectorstores'
 
@@ -45,11 +47,16 @@ def get_vectorstore_from_path(path):
         print(f"Error loading vector store from {path}: {e}")
         return None
 
-@app.route('/')
+@app.route('/documents')
 def index():
-    files = get_all_documents()
+    files = retrieve_docs()
     selected_doc = get_selected_document()
-    return render_template('index.html', files=files, selected_document=selected_doc)
+    print(files)
+    return jsonify({
+        'files': files,
+        'selected_document': selected_doc,
+        'message': 'ExpertMind API is running'
+    })
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -522,5 +529,5 @@ def get_feedback_by_document():
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['VECTORSTORE_DIR'], exist_ok=True)
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5000)
 
