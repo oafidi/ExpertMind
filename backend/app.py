@@ -47,7 +47,7 @@ def get_vectorstore_from_path(path):
         print(f"Error loading vector store from {path}: {e}")
         return None
 
-@app.route('/documents')
+@app.route('/api/documents')
 def index():
     files = retrieve_docs()
     selected_doc = get_selected_document()
@@ -58,11 +58,11 @@ def index():
         'message': 'ExpertMind API is running'
     })
 
-@app.route('/uploads/<filename>')
+@app.route('/api/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/upload', methods=['POST'])
+@app.route('/api/upload', methods=['POST'])
 def upload_file():
     file = request.files.get('file')
     if not file or not file.filename:
@@ -91,7 +91,7 @@ def upload_file():
     
     return jsonify({'filename': filename})
 
-@app.route('/ask', methods=['POST'])
+@app.route('/api/ask', methods=['POST'])
 def ask():
     data = request.get_json()
     if not data:
@@ -195,7 +195,7 @@ INSTRUCTIONS:
         'filename': filename
     })
 
-@app.route('/history', methods=['GET'])
+@app.route('/api/history', methods=['GET'])
 def get_history():
     filename = request.args.get('filename')
     doc_info = get_document(filename)
@@ -206,7 +206,7 @@ def get_history():
     history = get_chat_history(doc_id)
     return jsonify({'history': history})
 
-@app.route('/feedback', methods=['POST'])
+@app.route('/api/feedback', methods=['POST'])
 def submit_feedback():
     """Submit feedback for an answer"""
     data = request.get_json()
@@ -240,7 +240,7 @@ def submit_feedback():
     except Exception as e:
         return jsonify({'error': f'Error submitting feedback: {str(e)}'}), 500
 
-@app.route('/feedback/stats', methods=['GET'])
+@app.route('/api/feedback/stats', methods=['GET'])
 def get_feedback_statistics():
     """Get feedback statistics for a document"""
     filename = request.args.get('filename')
@@ -259,7 +259,7 @@ def get_feedback_statistics():
     except Exception as e:
         return jsonify({'error': f'Error getting stats: {str(e)}'}), 500
 
-@app.route('/note', methods=['POST'])
+@app.route('/api/note', methods=['POST'])
 def add_note_endpoint():
     """Add a detailed note for an answer"""
     data = request.get_json()
@@ -298,7 +298,7 @@ def add_note_endpoint():
     except Exception as e:
         return jsonify({'error': f'Error adding note: {str(e)}'}), 500
 
-@app.route('/learned', methods=['GET'])
+@app.route('/api/learned', methods=['GET'])
 def get_learned_knowledge():
     """Get learned knowledge for a document"""
     filename = request.args.get('filename')
@@ -318,7 +318,7 @@ def get_learned_knowledge():
     except Exception as e:
         return jsonify({'error': f'Error getting learned knowledge: {str(e)}'}), 500
 
-@app.route('/clear_chat', methods=['POST'])
+@app.route('/api/clear_chat', methods=['POST'])
 def clear_chat():
     """Clear chat history for a document"""
     data = request.get_json()
@@ -349,7 +349,7 @@ def clear_chat():
         print(f"Error clearing chat history: {e}")
         return jsonify({'error': f'Error clearing chat history: {str(e)}'}), 500
 
-@app.route('/delete', methods=['POST'])
+@app.route('/api/delete', methods=['POST'])
 def delete():
     data = request.get_json()
     if not data:
@@ -373,7 +373,7 @@ def delete():
         print(f"Error deleting document: {e}")
         return jsonify({'error': f'Error deleting document: {str(e)}'}), 500
 
-@app.route('/select_document', methods=['POST'])
+@app.route('/api/select_document', methods=['POST'])
 def select_document():
     """Set the currently selected document"""
     data = request.get_json()
@@ -402,7 +402,7 @@ def select_document():
         print(f"Error selecting document: {e}")
         return jsonify({'error': f'Error selecting document: {str(e)}'}), 500
 
-@app.route('/selected_document', methods=['GET'])
+@app.route('/api/selected_document', methods=['GET'])
 def get_selected_document_endpoint():
     """Get the currently selected document"""
     try:
@@ -424,7 +424,7 @@ def get_selected_document_endpoint():
         print(f"Error getting selected document: {e}")
         return jsonify({'error': f'Error getting selected document: {str(e)}'}), 500
 
-@app.route('/clear_selection', methods=['POST'])
+@app.route('/api/clear_selection', methods=['POST'])
 def clear_selection():
     """Clear the currently selected document"""
     try:
@@ -440,7 +440,7 @@ def clear_selection():
         print(f"Error clearing document selection: {e}")
         return jsonify({'error': f'Error clearing document selection: {str(e)}'}), 500
 
-@app.route('/all_feedback', methods=['GET'])
+@app.route('/api/all_feedback', methods=['GET'])
 def get_all_feedback():
     """Get all feedback with their associated documents"""
     try:
@@ -488,7 +488,7 @@ def get_all_feedback():
         print(f"Error getting all feedback: {e}")
         return jsonify({'error': f'Error getting all feedback: {str(e)}'}), 500
 
-@app.route('/feedback_by_document', methods=['GET'])
+@app.route('/api/feedback_by_document', methods=['GET'])
 def get_feedback_by_document():
     """Get feedback filtered by document filename"""
     filename = request.args.get('filename')
